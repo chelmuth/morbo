@@ -29,12 +29,14 @@ if not conf.CheckPKGConfig('0.15.0'):
 build_fw_scan = True
 build_tools   = True;
 
-if not conf.CheckPKG('libraw1394'):
-       print('Could not find libraw1394.')
-       build_tools = False
-       build_fw_scan = False
-else:
-       conf.env.ParseConfig('pkg-config --cflags --libs libraw1394')
+#if not conf.CheckPKG('libraw1394'):
+#       print('Could not find libraw1394.')
+#       build_tools = False
+#       build_fw_scan = False
+#else:
+#       conf.env.ParseConfig('pkg-config --cflags --libs libraw1394')
+
+conf.env.ParseConfig('pkg-config --cflags --libs libraw1394')
 
 if not conf.CheckPKG('sdl'):
        print('Could not find libsdl.')

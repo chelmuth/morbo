@@ -8,6 +8,7 @@
 #include <cinttypes>
 #include <cstdint>
 #include <cstring>
+#include <cerrno>
 
 #include <getopt.h>
 #include <unistd.h>
@@ -92,11 +93,13 @@ main(int argc, char **argv)
   }
 
   raw1394handle_t fw_handle = raw1394_new_handle_on_port(port);
+  printf("port=%ld\n", port);
 
   if (fw_handle == NULL) {
     perror("raw1394_new_handle_on_port");
     return EXIT_FAILURE;
   }
+  printf("port=%ld\n", port);
 
   nodeid_t target;
 
@@ -145,7 +148,7 @@ main(int argc, char **argv)
         for (uint64_t cur = address; cur < address+length; cur += step, buf += step/sizeof(quadlet_t)) {
           size_t size = (cur + step > address+length) ? (address+length - cur) : step;
           int res = raw1394_read(fw_handle, target, cur, size, buf);
-          if (res != 0) { perror("read data"); return EXIT_FAILURE; }
+          if (res && errno != EAGAIN) { printf("errno=%d %d %d\n", errno, EAGAIN, res); perror("read data"); return EXIT_FAILURE; }
         }
 
         SDL_UpdateRect(screen, 0, 0, width, height);
